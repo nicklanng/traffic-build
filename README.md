@@ -16,7 +16,7 @@ The specific model of Raspberry Pi is mostly irrelevant. I've chosen the Zero W 
 
 https://www.modmypi.com/raspberry-pi/breakout-boards/modmypi/modmypi-piot-relay-board
 
-The lights will run off a standard 240v 3-pin lead. That kind of voltage would kill the Pi, so a relay is used to seperate the microcontroller power circuit from the light power circuit. A Relay is a switch, controlled by the GPIO pins on the Pi, allowing the Pi to turn on and off the lights.
+The lights will run off a standard 240v 3-pin lead. That kind of voltage would kill the Pi, so a relay is used to separate the micro-controller power circuit from the light power circuit. A Relay is a switch, controlled by the GPIO pins on the Pi, allowing the Pi to turn on and off the lights.
 
 This board is particularly nice as the Pi Zero W can mount directly on top of it!
 
