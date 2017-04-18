@@ -1,4 +1,4 @@
 #!/bin/bash
 
-cd /home/pi/traffic-build
+cd /home/$USER/traffic-build
 sudo python3 main.py
