@@ -7,4 +7,4 @@ pip3 install requests-2.13.0-py2.py3-none-any.whl
 
 (crontab -l ; echo "@reboot sh /home/$USER/traffic-build/launcher.sh >/var/logs/traffic-build 2>&1")| crontab -
 
- sh /home/$USER/traffic-build/launcher.sh >/var/logs/traffic-build 2>&1 &
+sh /home/$USER/traffic-build/launcher.sh >/var/logs/traffic-build 2>&1 &
