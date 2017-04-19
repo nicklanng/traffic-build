@@ -62,10 +62,10 @@ try:
         time.sleep(1)
 
 except KeyboardInterrupt:
-    print "Quitting..."
+    print("Quitting...")
 
 except:
-    print "Other error or exception occurred!"
+    print("Other error or exception occurred!")
 
 finally:
     GPIO.cleanup()
