@@ -50,12 +50,22 @@ def switchLights(buildStatus):
         GPIO.output(PIN_AMBER, GPIO.LOW)
         GPIO.output(PIN_GREEN, GPIO.LOW)
 
-while True:
-    try:
-        buildStatus = getBuildStatus()
-    except:
-        buildStatus = BUILD_STATUS_UNKNOWN
+try:
+    while True:
+        try:
+            buildStatus = getBuildStatus()
+        except:
+            buildStatus = BUILD_STATUS_UNKNOWN
 
-    switchLights(buildStatus)
+        switchLights(buildStatus)
 
-    time.sleep(1)
+        time.sleep(1)
+
+except KeyboardInterrupt:
+    print "Quitting..."
+
+except:
+    print "Other error or exception occurred!"
+
+finally:
+    GPIO.cleanup()
