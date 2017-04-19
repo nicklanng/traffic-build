@@ -1,4 +1,3 @@
 #!/bin/bash
 
-cd /home/$USER/traffic-build
-python3 main.py
+python3 /home/$USER/traffic-build/main.py
