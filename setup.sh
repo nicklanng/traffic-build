@@ -1,6 +1,6 @@
 #!/bin/bash
 
-if [ "$EUID" -ne 0 ]; then echo "Please run as root"; exit; fi
+if [ $(id -u) -ne 0 ]; then echo "Please run as root"; exit; fi
 
 cd /usr/local/bin
 git clone https://github.com/nicklanng/traffic-build
