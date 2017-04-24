@@ -1,3 +1,5 @@
+#!/usr/bin/env python
+
 # import modules
 import time
 import xml.etree.ElementTree as etree

@@ -1,6 +1,12 @@
 # traffic-build
 A Raspberry Pi based build monitoring system
 
+## Installation
+
+```sh
+sudo sh -c "$(curl -fsSL https://raw.githubusercontent.com/nicklanng/traffic-build/master/setup.sh)"
+```
+
 ## Required Components
 
 ### Raspberry Pi Zero W
