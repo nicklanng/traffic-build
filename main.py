@@ -22,7 +22,7 @@ GPIO.setup(PIN_AMBER, GPIO.OUT)
 GPIO.setup(PIN_GREEN, GPIO.OUT)
 
 def getBuildStatus():
-    r = requests.get(CCNET_URL, timeout=1)
+    r = requests.get(CCNET_URL, timeout=4)
     if r.status_code != 200:
         return BUILD_STATUS_UNKNOWN
     else:
