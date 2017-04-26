@@ -10,6 +10,8 @@ import RPi.GPIO as GPIO
 BUILD_STATUS_SUCCESS = 0
 BUILD_STATUS_FAILURE = 1
 BUILD_STATUS_UNKNOWN = 2
+BUILD_ACTIVITY_SLEEPING = 0
+BUILD_ACTIVITY_BUILDING = 1
 PIN_RED = 5
 PIN_AMBER = 6
 PIN_GREEN = 16
@@ -28,8 +30,7 @@ def getBuildStatus():
     else:
         return parseResult(r.text)
 
-def parseResult(text):
-    root = etree.fromstring(text)
+def parseStatus(root):
     buildStatus = BUILD_STATUS_SUCCESS
     for child in root:
         if child.attrib['name'] not in ['Call Centre CI Build', 'Call Centre Installer Build'] :
@@ -40,28 +41,51 @@ def parseResult(text):
             break
     return buildStatus
 
-def switchLights(buildStatus):
+def parseActivity(root):
+    activity = BUILD_ACTIVITY_SLEEPING
+    
+    for child in root:
+        if child.attrib['name'] not in ['Call Centre CI Build', 'Call Centre Installer Build'] :
+            continue
+        activity = child.attrib['activity']
+        if activity == 'Building':
+            activity = BUILD_ACTIVITY_BUILDING
+            break
+    return activity
+
+def parseResult(text):
+    root = etree.fromstring(text)
+    buildStatus = parseStatus(root)
+    activity = parseActivity(root)
+    return (buildStatus, activity)
+
+def switchStatusLights(buildStatus):
     if buildStatus == BUILD_STATUS_SUCCESS:
         GPIO.output(PIN_RED, GPIO.LOW)
-        GPIO.output(PIN_AMBER, GPIO.LOW)
         GPIO.output(PIN_GREEN, GPIO.HIGH)
     elif buildStatus == BUILD_STATUS_UNKNOWN:
-        GPIO.output(PIN_RED, GPIO.LOW)
-        GPIO.output(PIN_AMBER, GPIO.HIGH)
-        GPIO.output(PIN_GREEN, GPIO.LOW)
+        GPIO.output(PIN_RED, GPIO.HIGH)
+        GPIO.output(PIN_GREEN, GPIO.HIGH)
     elif buildStatus == BUILD_STATUS_FAILURE:
         GPIO.output(PIN_RED, GPIO.HIGH)
-        GPIO.output(PIN_AMBER, GPIO.LOW)
         GPIO.output(PIN_GREEN, GPIO.LOW)
+
+def switchActivityLights(buildStatus):
+    if buildStatus == BUILD_ACTIVITY_SLEEPING:
+        GPIO.output(PIN_AMBER, GPIO.LOW)
+    elif buildStatus == BUILD_ACTIVITY_BUILDING:
+        GPIO.output(PIN_AMBER, GPIO.HIGH)
 
 try:
     while True:
         try:
-            buildStatus = getBuildStatus()
+            (buildStatus, activity) = getBuildStatus()
         except:
             buildStatus = BUILD_STATUS_UNKNOWN
+            activity = BUILD_ACTIVITY_SLEEPING
 
-        switchLights(buildStatus)
+        switchStatusLights(buildStatus)
+        switchActivityLights(activity)
 
         time.sleep(1)
 
