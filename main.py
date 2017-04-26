@@ -32,6 +32,8 @@ def parseResult(text):
     root = etree.fromstring(text)
     buildStatus = BUILD_STATUS_SUCCESS
     for child in root:
+        if child.attrib['name'] not in ['Call Centre CI Build', 'Call Centre Installer Build'] :
+            continue
         lastBuildState = child.attrib['lastBuildStatus']
         if lastBuildState == 'Failure':
             buildStatus = BUILD_STATUS_FAILURE
