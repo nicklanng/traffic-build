@@ -104,9 +104,6 @@ try:
 
         _buildStatus = buildStatus
         _activityStatus = activity
-        switchStatusLights(buildStatus)
-        switchActivityLights(activity)
-
         time.sleep(STATUS_REFRESH_RATE)
 
 except KeyboardInterrupt:
