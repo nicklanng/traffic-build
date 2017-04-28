@@ -47,8 +47,7 @@ def parseActivity(root):
     for child in root:
         if child.attrib['name'] not in ['Call Centre CI Build', 'Call Centre Installer Build'] :
             continue
-        activity = child.attrib['activity']
-        if activity == 'Building':
+        if child.attrib['activity'] == 'Building':
             activity = BUILD_ACTIVITY_BUILDING
             break
     return activity
