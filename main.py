@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 
 # import modules
-import time
+import time, threading
 import xml.etree.ElementTree as etree
 import requests
 import RPi.GPIO as GPIO
@@ -16,6 +16,12 @@ PIN_RED = 5
 PIN_AMBER = 6
 PIN_GREEN = 16
 CCNET_URL = 'http://buildservermk2/ccnet/XmlStatusReport.aspx'
+FLASH_RATE = 0.5
+STATUS_REFRESH_RATE = 1
+
+# mutables
+_buildStatus = BUILD_STATUS_UNKNOWN
+_activityStatus = BUILD_ACTIVITY_SLEEPING
 
 # setup pins
 GPIO.setmode(GPIO.BCM)
@@ -43,7 +49,7 @@ def parseStatus(root):
 
 def parseActivity(root):
     activity = BUILD_ACTIVITY_SLEEPING
-    
+
     for child in root:
         if child.attrib['name'] not in ['Call Centre CI Build', 'Call Centre Installer Build'] :
             continue
@@ -66,7 +72,7 @@ def switchStatusLights(buildStatus):
         GPIO.output(PIN_RED, GPIO.HIGH)
         GPIO.output(PIN_GREEN, GPIO.HIGH)
     elif buildStatus == BUILD_STATUS_FAILURE:
-        GPIO.output(PIN_RED, GPIO.HIGH)
+        GPIO.output(PIN_RED, not GPIO.input(PIN_RED))
         GPIO.output(PIN_GREEN, GPIO.LOW)
 
 def switchActivityLights(buildStatus):
@@ -75,6 +81,18 @@ def switchActivityLights(buildStatus):
     elif buildStatus == BUILD_ACTIVITY_BUILDING:
         GPIO.output(PIN_AMBER, GPIO.HIGH)
 
+def lightSwitcher():
+    """light switcher"""
+    while True:
+        switchStatusLights(_buildStatus)
+        switchActivityLights(_activityStatus)
+        time.sleep (FLASH_RATE)
+    return
+
+# fire up the light switcher thread, it dies with the process
+lightswitcher = threading.Thread(target=lightSwitcher)
+lightswitcher.start()
+        
 try:
     while True:
         try:
@@ -83,10 +101,9 @@ try:
             buildStatus = BUILD_STATUS_UNKNOWN
             activity = BUILD_ACTIVITY_SLEEPING
 
-        switchStatusLights(buildStatus)
-        switchActivityLights(activity)
-
-        time.sleep(1)
+        _buildStatus = buildStatus
+        _activityStatus = activity
+        time.sleep(STATUS_REFRESH_RATE)
 
 except KeyboardInterrupt:
     print("Quitting...")
@@ -95,4 +112,5 @@ except:
     print("Other error or exception occurred!")
 
 finally:
+
     GPIO.cleanup()
